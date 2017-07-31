@@ -20,11 +20,11 @@ int board[8][8] = {
 /**
  * Prints the current matrix status
  */
-void print_matrix(){
+void print_matrix(int matrix[8][8]){
 
     for(int i = 0; i < BOARD_SIZE; ++i){
         for(int j = 0; j < BOARD_SIZE; ++j){
-            if( board[i][j] == TILE ) cout << "X";
+            if( matrix[i][j] == TILE ) cout << "X";
             else cout << " ";
         }
         cout << endl;
@@ -36,7 +36,7 @@ int main()
 {
     cout << "Hello World!" << endl;
 
-    print_matrix();
+    print_matrix(board);
     return 0;
 }
 
