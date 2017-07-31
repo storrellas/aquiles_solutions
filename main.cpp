@@ -3,9 +3,10 @@
 using namespace std;
 
 const int BOARD_SIZE = 8;
+const int GOAL = 2;
 const int TILE = 1;
 const int EMPTY = 0;
-const int BOARD[8][8] = {
+const int BOARD[BOARD_SIZE][BOARD_SIZE] = {
     TILE, TILE,  TILE,  EMPTY, TILE,  TILE,  TILE,TILE,
     TILE, EMPTY, TILE,  TILE,  TILE,  EMPTY, TILE, EMPTY,
     TILE, EMPTY, EMPTY, TILE,  EMPTY, EMPTY, TILE, TILE,
@@ -13,14 +14,20 @@ const int BOARD[8][8] = {
     TILE, EMPTY, EMPTY, TILE,  TILE,  TILE,  TILE, TILE,
     TILE, TILE,  TILE,  TILE,  EMPTY, TILE,  EMPTY, EMPTY,
     TILE, EMPTY, EMPTY, TILE,  EMPTY, TILE,  TILE,  TILE,
-    TILE, TILE,  EMPTY, TILE,  TILE,  TILE,  EMPTY, TILE,
+    TILE, TILE,  EMPTY, TILE,  TILE,  TILE,  EMPTY, GOAL,
 
 };
+
+
+const int UNVISITED = -1;
+const int VISITING = -2;
+const int NON_VISTABLE = -3;
+int distance_matrix[BOARD_SIZE][BOARD_SIZE] = {UNVISITED};
 
 /**
  * Prints the current matrix status
  */
-void print_matrix(const int matrix[BOARD_SIZE][BOARD_SIZE]){
+void print_board(const int matrix[BOARD_SIZE][BOARD_SIZE]){
 
     for(int i = 0; i < BOARD_SIZE; ++i){
         for(int j = 0; j < BOARD_SIZE; ++j){
@@ -29,9 +36,29 @@ void print_matrix(const int matrix[BOARD_SIZE][BOARD_SIZE]){
         }
         cout << endl;
     }
-
 }
 
+
+/**
+ * Prints the current matrix status
+ */
+void print_distance_matrix(const int matrix[BOARD_SIZE][BOARD_SIZE]){
+
+    cout << " " << endl;
+    cout << "DISTANCE MATRIX:" << endl;
+    cout << " " << endl;
+
+    for(int i = 0; i < BOARD_SIZE; ++i){
+        for(int j = 0; j < BOARD_SIZE; ++j){
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+/* memset example */
+#include <stdio.h>
+#include <string.h>
 
 int main()
 {
@@ -39,8 +66,28 @@ int main()
     cout << "-- Program init --" << endl;
     cout << "------------------" << endl;
 
-    print_matrix(BOARD);
+    // Print board
+    print_board(BOARD);
 
+    /// Distance Matrix initialization
+    cout << " " << endl;
+    cout << "(1) Initialization:" << endl;
+    cout << " " << endl;
+
+    std::fill_n(&distance_matrix[0][0], sizeof(distance_matrix) / sizeof(**distance_matrix), UNVISITED);
+    print_distance_matrix(distance_matrix);
+
+    /// Calculate non-visitable
+    cout << " " << endl;
+    cout << "(2) Calcualte non-visitable:" << endl;
+    cout << " " << endl;
+    for(int i = 0; i < BOARD_SIZE; ++i){
+        for(int j = 0; j < BOARD_SIZE; ++j){
+            if( BOARD[i][j] == EMPTY ) distance_matrix[i][j] = NON_VISTABLE;
+        }
+    }
+
+    print_distance_matrix(distance_matrix);
 
     cout << "------------------" << endl;
     cout << "-- Program END --" << endl;
