@@ -6,6 +6,7 @@
 
 using namespace std;
 
+//#ifdef DEBUG
 
 namespace Board{
 
@@ -65,13 +66,10 @@ public:
         std::fill_n(&matrix_status[0][0], sizeof(matrix_status) / sizeof(**matrix_status), UNVISITED);
     }
 
-
-
     /**
      * Prints the current matrix status
      */
     std::string to_str(){
-
 
         std::ostringstream ss;
         ss << " " << endl;
@@ -97,93 +95,104 @@ public:
         return ss.str();
     }
 
+    /**
+     * Check whether cooridnates are in board
+     */
+    bool check_in_board(int x_cord, int y_cord){
+        if( x_cord < 0 or x_cord > 7 ) return false;
+        if( y_cord < 0 or y_cord > 7 ) return false;
+        if(Board::MATRIX[x_cord][y_cord] == Board::EMPTY) return false;
+        return true;
+    }
+
+    /**
+     * Treats the specific tile
+     */
+    void treat_tile(int x_cord, int y_cord, int distance_to_goal){
+        if( check_in_board(x_cord, y_cord) and matrix_status[x_cord][y_cord] == UNVISITED){
+            matrix[x_cord][y_cord] = distance_to_goal + 1;
+            matrix_status[x_cord][y_cord] = VISITING;
+        }
+    }
+
+
+    /**
+     * @brief visit_tile Visit the specified tile and treat neighbors
+     * @param x_cord
+     * @param y_cord
+     * @param distance_to_goal
+     */
+    void visit_tile(int x_cord, int y_cord){
+
+        int x_neigh, y_neigh;
+        int distance_to_goal = matrix[x_cord][y_cord];
+#ifdef DEBUG
+        cout << "VISITING " << matrix_status[x_cord][y_cord] << " " << x_cord << " " << y_cord << " " << distance_to_goal << endl;
+#endif
+        // left neighbour
+        x_neigh = x_cord-1; y_neigh = y_cord;
+        treat_tile(x_neigh, y_neigh, distance_to_goal);
+
+        // right neighbour
+        x_neigh = x_cord+1; y_neigh = y_cord;
+        treat_tile(x_neigh, y_neigh, distance_to_goal);
+
+        // up neighbour
+        x_neigh = x_cord; y_neigh = y_cord+1;
+        treat_tile(x_neigh, y_neigh, distance_to_goal);
+
+        // down neighbour
+        x_neigh = x_cord; y_neigh = y_cord-1;
+        treat_tile(x_neigh, y_neigh, distance_to_goal);
+
+        // Mark node as visited
+        matrix_status[x_cord][y_cord] = VISITED;
+    }
+
+
+    void analyse(){
+
+        bool finished = false;
+        const int goal_x = 7;
+        const int goal_y = 7;
+        matrix[goal_x][goal_y] = 0;
+        matrix_status[goal_x][goal_y] = VISITING;
+
+        int iterations = 0;
+
+        while( !finished ){
+            finished = true;
+#ifdef DEBUG
+            cout << to_str() << endl;
+#endif
+
+            // Iterate full-board
+            for(int i = 0; i < Board::SIZE; ++i){
+                for(int j = 0; j < Board::SIZE; ++j){
+
+                    if( matrix_status[i][j] == VISITING ){
+                        // visit tile
+                        visit_tile(i, j);
+                        finished = false;
+                    }
+
+                }
+            }
+
+    //        // --------------------
+    //        if( iterations > 13 ) break;
+    //        iterations++;
+    //        // --------------------
+
+        }
+
+    }
 
 };
 
 
-DistanceGenerator distance_generator;
+DistanceGenerator* distance_generator = nullptr;
 
-
-
-
-
-/**
- * Prints the current matrix status
- */
-void print_distance_matrix(){
-
-    cout << " " << endl;
-    cout << "DISTANCE MATRIX:" << endl;
-    cout << " " << endl;
-
-    for(int i = 0; i < Board::SIZE; ++i){
-        for(int j = 0; j < Board::SIZE; ++j){
-            cout << setfill('0') << setw(2) << distance_generator.matrix[i][j] << " ";
-        }
-        cout << endl;
-    }
-    cout << endl;
-    for(int i = 0; i < Board::SIZE; ++i){
-        for(int j = 0; j < Board::SIZE; ++j){
-            cout << setfill('0') << setw(2) << distance_generator.matrix_status[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    cout << endl;
-}
-
-/**
- * Check whether cooridnates are in board
- */
-bool check_in_board(int x_cord, int y_cord){
-    if( x_cord < 0 or x_cord > 7 ) return false;
-    if( y_cord < 0 or y_cord > 7 ) return false;
-    if(Board::MATRIX[x_cord][y_cord] == Board::EMPTY) return false;
-    return true;
-}
-
-/**
- * Treats the specific tile
- */
-void treat_tile(int x_cord, int y_cord, int distance_to_goal){
-    if( check_in_board(x_cord, y_cord) and distance_generator.matrix_status[x_cord][y_cord] == UNVISITED){
-        distance_generator.matrix[x_cord][y_cord] = distance_to_goal + 1;
-        distance_generator.matrix_status[x_cord][y_cord] = VISITING;
-    }
-}
-
-
-/**
- * @brief visit_tile Visit the specified tile and treat neighbors
- * @param x_cord
- * @param y_cord
- * @param distance_to_goal
- */
-void visit_tile(int x_cord, int y_cord, int distance_to_goal){
-
-    int x_neigh, y_neigh;
-
-    cout << "VISITING " << distance_generator.matrix_status[x_cord][y_cord] << " " << x_cord << " " << y_cord << " " << distance_to_goal << endl;
-    // left neighbour
-    x_neigh = x_cord-1; y_neigh = y_cord;
-    treat_tile(x_neigh, y_neigh, distance_to_goal);
-
-    // right neighbour
-    x_neigh = x_cord+1; y_neigh = y_cord;
-    treat_tile(x_neigh, y_neigh, distance_to_goal);
-
-    // up neighbour
-    x_neigh = x_cord; y_neigh = y_cord+1;
-    treat_tile(x_neigh, y_neigh, distance_to_goal);
-
-    // down neighbour
-    x_neigh = x_cord; y_neigh = y_cord-1;
-    treat_tile(x_neigh, y_neigh, distance_to_goal);
-
-    // Mark node as visited
-    distance_generator.matrix_status[x_cord][y_cord] = VISITED;
-}
 
 int main()
 {
@@ -191,72 +200,42 @@ int main()
     cout << "-- Program init --" << endl;
     cout << "------------------" << endl;
 
-    // Print board
+    /// Print board
+    cout << " " << endl;
+    cout << "(1) Board:" << endl;
+    cout << " " << endl;
     cout << Board::to_str() << endl;
 
     /// Distance Matrix initialization
     cout << " " << endl;
-    cout << "(1) Initialization:" << endl;
+    cout << "(2) Initialization:" << endl;
     cout << " " << endl;
-
-
-//    std::fill_n(&distance_matrix[0][0], sizeof(distance_matrix) / sizeof(**distance_matrix), 0);
-//    std::fill_n(&distance_matrix_status[0][0], sizeof(distance_matrix) / sizeof(**distance_matrix), UNVISITED);
-//    print_distance_matrix();
-
-    cout << distance_generator.to_str() << endl;
+    distance_generator = new DistanceGenerator();
+    cout << distance_generator->to_str() << endl;
 
     /// Calculate non-visitable
     cout << " " << endl;
-    cout << "(2) Calcualte non-visitable:" << endl;
+    cout << "(3) Calcualte non-visitable:" << endl;
     cout << " " << endl;
     for(int i = 0; i < Board::SIZE; ++i){
         for(int j = 0; j < Board::SIZE; ++j){
             if( Board::MATRIX[i][j] == Board::EMPTY )
-                distance_generator.matrix[i][j] = NON_VISTABLE;
+                distance_generator->matrix[i][j] = NON_VISTABLE;
         }
     }
-    print_distance_matrix();
+    cout << distance_generator->to_str() << endl;
 
     cout << " " << endl;
-    cout << "(3) Iterate through matrix:" << endl;
+    cout << "(4) Iterate through matrix:" << endl;
     cout << " " << endl;
 
-    bool finished = false;
-    const int goal_x = 7;
-    const int goal_y = 7;
-    distance_generator.matrix[goal_x][goal_y] = 0;
-    distance_generator.matrix_status[goal_x][goal_y] = VISITING;
-
-    int iterations = 0;
-
-    while( !finished ){
-        finished = true;
-        print_distance_matrix();
-
-        // Iterate full-board
-        for(int i = 0; i < Board::SIZE; ++i){
-            for(int j = 0; j < Board::SIZE; ++j){
-
-                if( distance_generator.matrix_status[i][j] == VISITING ){
-                    // visit tile
-                    visit_tile(i, j, distance_generator.matrix[i][j]);
-                    finished = false;
-                }
-
-            }
-        }
-
-//        // --------------------
-//        if( iterations > 13 ) break;
-//        iterations++;
-//        // --------------------
-
-    }
+    distance_generator->analyse();
+    cout << distance_generator->to_str() << endl;
 
     cout << "------------------" << endl;
     cout << "-- Program END --" << endl;
     cout << "------------------" << endl;
+    delete distance_generator;
     return 0;
 }
 
