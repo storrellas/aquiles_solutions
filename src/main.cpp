@@ -5,16 +5,17 @@
 
 using namespace std;
 
+
 const int BOARD_SIZE = 8;
 const int GOAL = 2;
 const int TILE = 1;
 const int EMPTY = 0;
 const int BOARD[BOARD_SIZE][BOARD_SIZE] = {
-    TILE, TILE,  TILE,  EMPTY, TILE,  TILE,  TILE,TILE,
-    TILE, EMPTY, TILE,  TILE,  TILE,  EMPTY, TILE, EMPTY,
-    TILE, EMPTY, EMPTY, TILE,  EMPTY, EMPTY, TILE, TILE,
+    TILE, TILE,  TILE,  EMPTY, TILE,  TILE,  TILE,  TILE,
+    TILE, EMPTY, TILE,  TILE,  TILE,  EMPTY, TILE,  EMPTY,
+    TILE, EMPTY, EMPTY, TILE,  EMPTY, EMPTY, TILE,  TILE,
     TILE, TILE,  EMPTY, TILE,  EMPTY, EMPTY, EMPTY, TILE,
-    TILE, EMPTY, EMPTY, TILE,  TILE,  TILE,  TILE, TILE,
+    TILE, EMPTY, EMPTY, TILE,  TILE,  TILE,  TILE,  TILE,
     TILE, TILE,  TILE,  TILE,  EMPTY, TILE,  EMPTY, EMPTY,
     TILE, EMPTY, EMPTY, TILE,  EMPTY, TILE,  TILE,  TILE,
     TILE, TILE,  EMPTY, TILE,  TILE,  TILE,  EMPTY, GOAL,
@@ -66,6 +67,8 @@ void print_distance_matrix(){
         }
         cout << endl;
     }
+
+    cout << endl;
 }
 
 /**
@@ -76,6 +79,16 @@ bool check_in_board(int x_cord, int y_cord){
     if( y_cord < 0 or y_cord > 7 ) return false;
     if(BOARD[x_cord][y_cord] == EMPTY) return false;
     return true;
+}
+
+/**
+ * Treats the specific tile
+ */
+void treat_tile(int x_cord, int y_cord, int distance_to_goal){
+    if( check_in_board(x_cord, y_cord) and distance_matrix_status[x_cord][y_cord] == UNVISITED){
+        distance_matrix[x_cord][y_cord] = distance_to_goal + 1;
+        distance_matrix_status[x_cord][y_cord] = VISITING;
+    }
 }
 
 
@@ -92,35 +105,19 @@ void visit_tile(int x_cord, int y_cord, int distance_to_goal){
     cout << "VISITING " << distance_matrix_status[x_cord][y_cord] << " " << x_cord << " " << y_cord << " " << distance_to_goal << endl;
     // left neighbour
     x_neigh = x_cord-1; y_neigh = y_cord;
-    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
-        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
-        distance_matrix_status[x_neigh][y_neigh] = VISITING;
-    }
-
+    treat_tile(x_neigh, y_neigh, distance_to_goal);
 
     // right neighbour
     x_neigh = x_cord+1; y_neigh = y_cord;
-    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
-        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
-        distance_matrix_status[x_neigh][y_neigh] = VISITING;
-    }
-
+    treat_tile(x_neigh, y_neigh, distance_to_goal);
 
     // up neighbour
     x_neigh = x_cord; y_neigh = y_cord+1;
-    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
-        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
-        distance_matrix_status[x_neigh][y_neigh] = VISITING;
-    }
-
+    treat_tile(x_neigh, y_neigh, distance_to_goal);
 
     // down neighbour
     x_neigh = x_cord; y_neigh = y_cord-1;
-    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
-        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
-        distance_matrix_status[x_neigh][y_neigh] = VISITING;
-    }
-
+    treat_tile(x_neigh, y_neigh, distance_to_goal);
 
     // Mark node as visited
     distance_matrix_status[x_cord][y_cord] = VISITED;
@@ -189,8 +186,6 @@ int main()
 //        iterations++;
 //        // --------------------
 
-
-        cout << endl;
     }
 
     cout << "------------------" << endl;
