@@ -1,4 +1,7 @@
 #include <iostream>
+#include <iomanip>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -22,6 +25,7 @@ const int BOARD[BOARD_SIZE][BOARD_SIZE] = {
 const int UNVISITED = -1;
 const int VISITING = -2;
 const int NON_VISTABLE = -3;
+const int VISITED = -4;
 int distance_matrix[BOARD_SIZE][BOARD_SIZE];
 int distance_matrix_status[BOARD_SIZE][BOARD_SIZE];
 
@@ -39,7 +43,6 @@ void print_board(const int matrix[BOARD_SIZE][BOARD_SIZE]){
     }
 }
 
-#include <iomanip>
 
 /**
  * Prints the current matrix status
@@ -65,9 +68,53 @@ void print_distance_matrix(){
     }
 }
 
-/* memset example */
-#include <stdio.h>
-#include <string.h>
+bool check_in_board(int x_cord, int y_cord){
+    if( x_cord < 0 or x_cord > 7 ) return false;
+    if( y_cord < 0 or y_cord > 7 ) return false;
+    if(BOARD[x_cord][y_cord] == EMPTY) return false;
+    return true;
+}
+
+void visit_tile(int x_cord, int y_cord, int distance_to_goal){
+
+    int x_neigh, y_neigh;
+
+    cout << "VISITING " << distance_matrix_status[x_cord][y_cord] << " " << x_cord << " " << y_cord << " " << distance_to_goal << endl;
+    // left neighbour
+    x_neigh = x_cord-1; y_neigh = y_cord;
+    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
+        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
+        distance_matrix_status[x_neigh][y_neigh] = VISITING;
+    }
+
+
+    // right neighbour
+    x_neigh = x_cord+1; y_neigh = y_cord;
+    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
+        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
+        distance_matrix_status[x_neigh][y_neigh] = VISITING;
+    }
+
+
+    // up neighbour
+    x_neigh = x_cord; y_neigh = y_cord+1;
+    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
+        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
+        distance_matrix_status[x_neigh][y_neigh] = VISITING;
+    }
+
+
+    // down neighbour
+    x_neigh = x_cord; y_neigh = y_cord-1;
+    if( check_in_board(x_neigh, y_neigh) and distance_matrix_status[x_neigh][y_neigh] == UNVISITED){
+        distance_matrix[x_neigh][y_neigh] = distance_to_goal + 1;
+        distance_matrix_status[x_neigh][y_neigh] = VISITING;
+    }
+
+
+    // Mark node as visited
+    distance_matrix_status[x_cord][y_cord] = VISITED;
+}
 
 int main()
 {
@@ -96,33 +143,47 @@ int main()
             if( BOARD[i][j] == EMPTY ) distance_matrix[i][j] = NON_VISTABLE;
         }
     }
-
     print_distance_matrix();
 
+    cout << " " << endl;
+    cout << "(3) Iterate through matrix:" << endl;
+    cout << " " << endl;
 
-//    bool finished = false;
-//    const int goal_x = 7;
-//    const int goal_y = 7;
-//    distance_matrix[goal_x][goal_y] = 0;
+    bool finished = false;
+    const int goal_x = 7;
+    const int goal_y = 7;
+    distance_matrix[goal_x][goal_y] = 0;
+    distance_matrix_status[goal_x][goal_y] = VISITING;
 
-//    int i = 4;
+    int iterations = 0;
+
+    while( !finished ){
+
+        print_distance_matrix();
+
+        // Iterate full-board
+        for(int i = 0; i < BOARD_SIZE; ++i){
+            for(int j = 0; j < BOARD_SIZE; ++j){
+
+                if( distance_matrix_status[i][j] == VISITING ){
+                    // treat tile
+                    visit_tile(i, j, distance_matrix[i][j]);
+//    cout << "In iteration" << endl;
+//                    print_distance_matrix();
+//cout << "END In iteration" << endl;
+                }
+
+            }
+        }
+
+        // --------------------
+        if( iterations > 4 ) break;
+        iterations++;
+        // --------------------
 
 
-//    int x, y;
-//    while( !finished ){
-
-
-//        for(int i = 0; i < BOARD_SIZE; ++i){
-//            for(int j = 0; j < BOARD_SIZE; ++j){
-//                if( [i][j] == EMPTY ) distance_matrix[i][j] = NON_VISTABLE;
-//            }
-//        }
-
-//        // --------------------
-//        if( i > 4 ) break;
-//        i++;
-//        // --------------------
-//    }
+        cout << endl;
+    }
 
     cout << "------------------" << endl;
     cout << "-- Program END --" << endl;
