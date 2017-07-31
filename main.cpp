@@ -168,7 +168,7 @@ int main()
     int iterations = 0;
 
     while( !finished ){
-
+        finished = true;
         print_distance_matrix();
 
         // Iterate full-board
@@ -178,15 +178,16 @@ int main()
                 if( distance_matrix_status[i][j] == VISITING ){
                     // visit tile
                     visit_tile(i, j, distance_matrix[i][j]);
+                    finished = false;
                 }
 
             }
         }
 
-        // --------------------
-        if( iterations > 4 ) break;
-        iterations++;
-        // --------------------
+//        // --------------------
+//        if( iterations > 13 ) break;
+//        iterations++;
+//        // --------------------
 
 
         cout << endl;
