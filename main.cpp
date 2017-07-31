@@ -5,7 +5,7 @@ using namespace std;
 const int BOARD_SIZE = 8;
 const int TILE = 1;
 const int EMPTY = 0;
-int board[8][8] = {
+const int BOARD[8][8] = {
     TILE, TILE,  TILE,  EMPTY, TILE,  TILE,  TILE,TILE,
     TILE, EMPTY, TILE,  TILE,  TILE,  EMPTY, TILE, EMPTY,
     TILE, EMPTY, EMPTY, TILE,  EMPTY, EMPTY, TILE, TILE,
@@ -20,7 +20,7 @@ int board[8][8] = {
 /**
  * Prints the current matrix status
  */
-void print_matrix(int matrix[8][8]){
+void print_matrix(const int matrix[BOARD_SIZE][BOARD_SIZE]){
 
     for(int i = 0; i < BOARD_SIZE; ++i){
         for(int j = 0; j < BOARD_SIZE; ++j){
@@ -32,11 +32,19 @@ void print_matrix(int matrix[8][8]){
 
 }
 
+
 int main()
 {
-    cout << "Hello World!" << endl;
+    cout << "------------------" << endl;
+    cout << "-- Program init --" << endl;
+    cout << "------------------" << endl;
 
-    print_matrix(board);
+    print_matrix(BOARD);
+
+
+    cout << "------------------" << endl;
+    cout << "-- Program END --" << endl;
+    cout << "------------------" << endl;
     return 0;
 }
 
