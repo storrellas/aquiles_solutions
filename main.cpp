@@ -68,6 +68,9 @@ void print_distance_matrix(){
     }
 }
 
+/**
+ * Check whether cooridnates are in board
+ */
 bool check_in_board(int x_cord, int y_cord){
     if( x_cord < 0 or x_cord > 7 ) return false;
     if( y_cord < 0 or y_cord > 7 ) return false;
@@ -75,6 +78,13 @@ bool check_in_board(int x_cord, int y_cord){
     return true;
 }
 
+
+/**
+ * @brief visit_tile Visit the specified tile and treat neighbors
+ * @param x_cord
+ * @param y_cord
+ * @param distance_to_goal
+ */
 void visit_tile(int x_cord, int y_cord, int distance_to_goal){
 
     int x_neigh, y_neigh;
@@ -166,11 +176,8 @@ int main()
             for(int j = 0; j < BOARD_SIZE; ++j){
 
                 if( distance_matrix_status[i][j] == VISITING ){
-                    // treat tile
+                    // visit tile
                     visit_tile(i, j, distance_matrix[i][j]);
-//    cout << "In iteration" << endl;
-//                    print_distance_matrix();
-//cout << "END In iteration" << endl;
                 }
 
             }
