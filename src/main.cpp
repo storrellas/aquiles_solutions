@@ -46,7 +46,9 @@ namespace Board{
 }
 
 
-
+/**
+ * Genarates a matrix with distances to goal
+ */
 class DistanceGenerator{
 public:
 
