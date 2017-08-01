@@ -167,6 +167,17 @@ private:
 #endif
     }
 
+	void find_goal(int& goal_x, int& goal_y){
+        for(int i = 0; i < Board::SIZE; ++i){
+            for(int j = 0; j < Board::SIZE; ++j){
+				if(Board::MATRIX[i][j] == Board::GOAL ){
+                  goal_x = i; goal_y = j;
+				}
+
+            }
+        }
+    }
+
 public:
 
     /**
@@ -174,13 +185,14 @@ public:
      */
     void analyse(){
 
-
-        bool finished = false;
-        const int goal_x = 7;
-        const int goal_y = 7;
+        // Find goal
+        int goal_x, goal_y;
+        find_goal(goal_x, goal_y);
         matrix[goal_x][goal_y] = 0;
         matrix_status[goal_x][goal_y] = TILE_STATUS::VISITING;
 
+		// Iterate
+        bool finished = false;
         int iterations = 0;
 
         while( !finished ){
